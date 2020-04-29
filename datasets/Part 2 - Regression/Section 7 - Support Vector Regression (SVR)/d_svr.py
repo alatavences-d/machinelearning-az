@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar  7 19:04:40 2019
+Created on Mon Mar 11 18:38:15 2019
 
 @author: juangabriel
 """
 
-# Regresión con Árboles de Decisión
+# SVR
 
 # Cómo importar las librerías
 import numpy as np
@@ -26,29 +26,31 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, rando
 """
 
 # Escalado de variables
-"""from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler
 sc_X = StandardScaler()
-X_train = sc_X.fit_transform(X_train)
-X_test = sc_X.transform(X_test)"""
+sc_y = StandardScaler()
+X = sc_X.fit_transform(X)
+y = sc_y.fit_transform(y.reshape(-1,1))
+#Dentro del reshape se pone (-1,1) que es lo mismo a len(y), que nos sirve para leer toda la filas
+#y = y.reshape(len(y),1)
+#y = y.reshape(-1,1)
 
 # Ajustar la regresión con el dataset
-from sklearn.tree import DecisionTreeRegressor
-regression = DecisionTreeRegressor(random_state = 0)
+from sklearn.svm import SVR
+regression = SVR(kernel = "rbf", epsilon=0 , C=20)
 regression.fit(X, y)
 
-# Predicción de nuestros modelos
-y_pred = regression.predict(np.array([[6.5]]))
-
-# Visualización de los resultados del Modelo Polinómico
+# Visualización de los resultados del SVR
 X_grid = np.arange(min(X), max(X), 0.1)
 X_grid = X_grid.reshape(len(X_grid), 1)
 plt.scatter(X, y, color = "red")
-plt.plot(X, regression.predict(X), color = "blue")
-plt.title("Modelo de Regresión")
+plt.plot(X_grid, regression.predict(X_grid), color = "blue")
+plt.title("Modelo de Regresión (SVR)")
 plt.xlabel("Posición del empleado")
 plt.ylabel("Sueldo (en $)")
 plt.show()
 
-#Al momento de acer el plot pones reemplazar el "X"
-#por el "X_grid" que creamos antes.
+# Predicción de nuestros modelos con SVR
+y_pred = sc_y.inverse_transform(regression.predict(sc_X.transform(np.array([[6.5]]))))
 
+#help(StandardScaler)

@@ -52,3 +52,5 @@ plt.show()
 #Al momento de acer el plot pones reemplazar el "X"
 #por el "X_grid" que creamos antes.
 
+precision = regression.score(X_test,y_test)
+

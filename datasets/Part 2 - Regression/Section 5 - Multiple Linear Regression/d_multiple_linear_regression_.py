@@ -52,7 +52,7 @@ regression.fit(X_train, y_train)
 y_pred = regression.predict(X_test)
 
 # Construir el modelo óptimo de RLM utilizando la Eliminación hacia atrás
-import statsmodels.formula.api as sm
+import statsmodels.api as sm
 X = np.append(arr = np.ones((50,1)).astype(int), values = X, axis = 1)
 SL = 0.05
 
@@ -77,3 +77,28 @@ regression_OLS.summary()
 X_opt = X[:, [0, 3]]
 regression_OLS = sm.OLS(endog = y, exog = X_opt.tolist()).fit()
 regression_OLS.summary()
+
+
+#############################################################################
+import statsmodels.api as sm
+def backwardElimination(x, sl):    
+    numVars = len(x[0])    
+    for i in range(0, numVars):        
+        regressor_OLS = sm.OLS(y, x.tolist()).fit()        
+        maxVar = max(regressor_OLS.pvalues).astype(float)        
+        if maxVar > sl:            
+            for j in range(0, numVars - i):                
+                if (regressor_OLS.pvalues[j].astype(float) == maxVar):                    
+                    x = np.delete(x, j, 1)    
+    regressor_OLS.summary()    
+    return x 
+ 
+SL = 0.05
+X_opt = X[:, [0, 1, 2, 3, 4, 5]]
+X_Modeled = backwardElimination(X_opt, SL)
+
+
+#arr = np.array([[1,2,3,4], [5,6,7,8], [9,10,11,12]])
+
+## axis=0 , elimina fila y si axis=1 elimina columna
+##np.delete(arr, 1, 1)
